@@ -31,7 +31,7 @@ resource "helm_release" "backend" {
 }
 
 resource "helm_release" "frontend" {
-  name  = random_string.frontend_release_name
+  name  = random_string.frontend_release_name.result
   chart = "./frontend"
 
   set {
