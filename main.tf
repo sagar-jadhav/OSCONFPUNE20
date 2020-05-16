@@ -6,20 +6,8 @@ resource "random_password" "password" {
   length = 4
 }
 
-resource "random_string" "backend_release_name" {
-  length  = 10
-  special = false
-  number  = false
-}
-
-resource "random_string" "frontend_release_name" {
-  length  = 10
-  special = false
-  number  = false
-}
-
 resource "helm_release" "backend" {
-  name  = random_string.backend_release_name.result
+  name  = "db"
   chart = "./backend"
 
   set {
@@ -27,11 +15,11 @@ resource "helm_release" "backend" {
     value = random_password.password.result
   }
 
-  depends_on = [random_password.password, random_string.backend_release_name]
+  depends_on = [random_password.password]
 }
 
 resource "helm_release" "frontend" {
-  name  = random_string.frontend_release_name.result
+  name  = "phpmyadmin"
   chart = "./frontend"
 
   set {
@@ -39,7 +27,7 @@ resource "helm_release" "frontend" {
     value = random_password.password.result
   }
 
-  depends_on = [helm_release.backend, random_password.password, random_string.frontend_release_name]
+  depends_on = [helm_release.backend, random_password.password]
 }
 
 resource "null_resource" "example1" {
